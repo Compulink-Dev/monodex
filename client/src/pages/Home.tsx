@@ -8,9 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Carousel,
   CarouselContent,
@@ -19,55 +16,101 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Code,
   Cpu,
-  Expand,
   Layout,
-  Mail,
   Paintbrush,
-  Phone,
   Search,
   Server,
   TypeIcon,
 } from "lucide-react";
-import MediaGallery from "@/components/MediaGallery";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { BackgroundGradient } from "@/components/styles/background-gradient";
+import { WavyBackground } from "@/components/styles/wavy-background";
+import { StickyScroll } from "@/components/styles/sticky-scroll-reveal";
+import { ParallaxSection } from "@/components/parallax-section";
+import { TestimonialCarousel } from "@/components/testimonial-carousel";
+import { MediaGalleryWithLightbox } from "@/components/media-gallery-with-lightbox";
+import { AnimatedContactSection } from "@/components/animated-contact-section";
 
 export function HomePage() {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="space-y-20">
-      {/* Hero Section */}
-      <section className="p-8">
-        <div className="grid items-center gap-8 md:grid-cols-2">
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              Showcase Your Creative Work
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              A stunning portfolio platform built with modern technologies to
-              highlight your projects and designs.
-            </p>
-            <div className="flex gap-4 mt-8">
-              <Button size="lg">Get Started</Button>
-              <Button size="lg" variant="outline">
-                View Portfolio
-              </Button>
+    <div className="space-y-20 overflow-hidden">
+      {/* Animated Hero Section */}
+
+      <WavyBackground className=" pb-40">
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+          transition={{ duration: 0.8 }}
+          className="p-8"
+        >
+          <div className="grid items-center gap-8 md:grid-cols-2">
+            <div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"
+              >
+                Showcase Your Creative Work
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="mt-4 text-lg text-muted-foreground"
+              >
+                A stunning portfolio platform built with modern technologies to
+                highlight your projects and designs.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="flex gap-4 mt-8"
+              >
+                <Button size="lg">Get Started</Button>
+                <Button size="lg" variant="outline">
+                  View Portfolio
+                </Button>
+              </motion.div>
             </div>
-          </div>
-          <div className="relative aspect-video bg-muted rounded-lg overflow-hidden shadow-xl">
-            <video
-              autoPlay
-              loop
-              muted
-              className="absolute inset-0 w-full h-full object-cover"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="relative aspect-video bg-muted rounded-lg overflow-hidden shadow-xl"
             >
-              <source src="/hero-video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              >
+                <source src="/hero-video.mp4" type="video/mp4" />
+              </video>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </motion.section>
+      </WavyBackground>
+
+      {/* Featured Designs with Sticky Scroll */}
+      <StickyScroll content={featuredDesigns} />
 
       {/* Featured Designs Section */}
       <section className="py-8 px-20">
@@ -110,8 +153,25 @@ export function HomePage() {
       </section>
 
       {/* Skills Section */}
-      <section className="py-20 mx-8 px-8 bg-muted rounded-3xl">
-        <h2 className="text-3xl font-bold text-center mb-12">My Skills</h2>
+      <motion.section
+        ref={ref}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        variants={{
+          visible: {
+            transition: {
+              staggerChildren: 0.1,
+            },
+          },
+        }}
+        className="py-20 mx-8 px-8 bg-muted rounded-3xl"
+      >
+        <motion.h2
+          variants={fadeIn}
+          className="text-3xl font-bold text-center mb-12"
+        >
+          My Skills
+        </motion.h2>
 
         <Tabs defaultValue="design" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -122,15 +182,27 @@ export function HomePage() {
           <TabsContent value="design" className="mt-8">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {designSkills.map((skill) => (
-                <Card key={skill.name} className="text-center p-6">
-                  <div className="mx-auto w-16 h-16 mb-4 flex items-center justify-center bg-primary/10 rounded-full">
-                    <skill.icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <CardTitle>{skill.name}</CardTitle>
-                  <CardDescription className="mt-2">
-                    {skill.level}/10
-                  </CardDescription>
-                </Card>
+                <motion.div key={skill.name} variants={fadeIn}>
+                  <BackgroundGradient className="rounded-[22px] p-4 bg-background">
+                    <Card className="text-center p-6 border-none">
+                      <div className="mx-auto w-16 h-16 mb-4 flex items-center justify-center bg-primary/10 rounded-full">
+                        <skill.icon className="w-8 h-8 text-primary" />
+                      </div>
+                      <CardTitle>{skill.name}</CardTitle>
+                      <div className="mt-4 h-2 bg-secondary/20 rounded-full">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${skill.level * 10}%` }}
+                          transition={{ duration: 1.5, delay: 0.5 }}
+                          className="h-full bg-primary rounded-full"
+                        />
+                      </div>
+                      <CardDescription className="mt-2">
+                        {skill.level}/10
+                      </CardDescription>
+                    </Card>
+                  </BackgroundGradient>
+                </motion.div>
               ))}
             </div>
           </TabsContent>
@@ -138,144 +210,100 @@ export function HomePage() {
           <TabsContent value="development" className="mt-8">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {devSkills.map((skill) => (
-                <Card key={skill.name} className="text-center p-6">
-                  <div className="mx-auto w-16 h-16 mb-4 flex items-center justify-center bg-primary/10 rounded-full">
-                    <skill.icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <CardTitle>{skill.name}</CardTitle>
-                  <CardDescription className="mt-2">
-                    {skill.level}/10
-                  </CardDescription>
-                </Card>
+                <motion.div key={skill.name} variants={fadeIn}>
+                  <BackgroundGradient className="rounded-[22px] p-4 bg-background">
+                    <Card className="text-center p-6 border-none">
+                      <div className="mx-auto w-16 h-16 mb-4 flex items-center justify-center bg-primary/10 rounded-full">
+                        <skill.icon className="w-8 h-8 text-primary" />
+                      </div>
+                      <CardTitle>{skill.name}</CardTitle>
+                      <div className="mt-4 h-2 bg-secondary/20 rounded-full">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${skill.level * 10}%` }}
+                          transition={{ duration: 1.5, delay: 0.5 }}
+                          className="h-full bg-primary rounded-full"
+                        />
+                      </div>
+                      <CardDescription className="mt-2">
+                        {skill.level}/10
+                      </CardDescription>
+                    </Card>
+                  </BackgroundGradient>
+                </motion.div>
               ))}
             </div>
           </TabsContent>
         </Tabs>
-      </section>
+      </motion.section>
 
-      {/* Projects Section */}
+      {/* Projects Section with 3D Tilt Effect */}
       <section className="px-8 py-20">
-        <div className="flex items-center justify-between mb-12">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="flex items-center justify-between mb-12"
+        >
           <h2 className="text-3xl font-bold">Featured Projects</h2>
           <Button variant="outline">View All Projects</Button>
-        </div>
+        </motion.div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
-            <Card key={project.title} className="overflow-hidden group">
-              <div className="aspect-video bg-muted relative overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="secondary">Quick View</Button>
+            <motion.div
+              key={project.title}
+              whileHover={{ y: -10 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <Card className="overflow-hidden group h-full">
+                <div className="aspect-video bg-muted relative overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button variant="secondary">Quick View</Button>
+                  </div>
                 </div>
-              </div>
-              <CardHeader>
-                <CardTitle>{project.title}</CardTitle>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {project.technologies.map((tech) => (
-                    <Badge key={tech} variant="secondary">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>{project.description}</CardDescription>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline" className="w-full">
-                  View Details
-                </Button>
-              </CardFooter>
-            </Card>
+                <CardHeader>
+                  <CardTitle>{project.title}</CardTitle>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {project.technologies.map((tech) => (
+                      <Badge key={tech} variant="secondary">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{project.description}</CardDescription>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full">
+                    View Details
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="px-8 mx-8 py-20 bg-muted rounded-3xl">
+      {/* Testimonials Section with Parallax Effect */}
+      <ParallaxSection className="px-8 mx-8 py-20 bg-muted rounded-3xl">
         <h2 className="text-3xl font-bold text-center mb-12">
           Client Testimonials
         </h2>
+        <TestimonialCarousel testimonials={testimonials} />
+      </ParallaxSection>
 
-        <Carousel className="w-full max-w-4xl mx-auto">
-          <CarouselContent>
-            {testimonials.map((testimonial) => (
-              <CarouselItem key={testimonial.id}>
-                <Card className="p-8 text-center">
-                  <Avatar className="w-16 h-16 mx-auto mb-4">
-                    <AvatarImage src={testimonial.avatar} />
-                    <AvatarFallback>
-                      {testimonial.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <blockquote className="text-lg italic mb-6">
-                    "{testimonial.quote}"
-                  </blockquote>
-                  <div>
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-muted-foreground">{testimonial.role}</p>
-                  </div>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="left-2" />
-          <CarouselNext className="right-2" />
-        </Carousel>
-      </section>
+      {/* Media Gallery with Lightbox */}
+      <MediaGalleryWithLightbox />
 
-      {/* Media Gallery Section */}
-      <MediaGallery />
-
-      {/* Contact Section */}
-      <section className="px-8 py-20">
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
-          <div>
-            <h2 className="text-3xl font-bold mb-6">Let's Work Together</h2>
-            <p className="text-muted-foreground mb-8">
-              Interested in collaborating or have questions about my work? Fill
-              out the form and I'll get back to you as soon as possible.
-            </p>
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <Mail className="w-6 h-6 text-primary" />
-                <span>hello@example.com</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <Phone className="w-6 h-6 text-primary" />
-                <span>+1 (555) 123-4567</span>
-              </div>
-            </div>
-          </div>
-          <Card className="p-6">
-            <form className="space-y-4">
-              <div>
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Your name" />
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="your@email.com" />
-              </div>
-              <div>
-                <Label htmlFor="message">Message</Label>
-                <Textarea
-                  className="min-h-[150px]"
-                  placeholder="Your message"
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                Send Message
-              </Button>
-            </form>
-          </Card>
-        </div>
-      </section>
+      {/* Contact Section with Animated Form */}
+      <AnimatedContactSection />
     </div>
   );
 }
