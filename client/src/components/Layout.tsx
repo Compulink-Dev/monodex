@@ -27,9 +27,9 @@ export function Layout() {
           <div className="flex items-center gap-2">
             <Avatar>
               <AvatarImage src="/logo.png" />
-              <AvatarFallback>MD</AvatarFallback>
+              <AvatarFallback>Zen</AvatarFallback>
             </Avatar>
-            <span className="font-bold">Monodex</span>
+            <span className="font-bold">Zenvue</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -91,12 +91,12 @@ export function Layout() {
           <div className="flex items-center gap-2">
             <Avatar>
               <AvatarImage src="/logo.png" />
-              <AvatarFallback>MD</AvatarFallback>
+              <AvatarFallback>Vue</AvatarFallback>
             </Avatar>
-            <span className="font-bold">Monodex</span>
+            <span className="font-bold">Zenvue</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Monodex. All rights reserved.
+            © {new Date().getFullYear()} Zenvue. All rights reserved.
           </p>
         </div>
       </footer>
